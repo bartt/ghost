@@ -1,5 +1,7 @@
 FROM ghost:alpine
 
+RUN npm install -g ghost-webdav-storage-adapter
+
 ENV GHOST_INSTALL /var/lib/ghost
 ENV GHOST_CONTENT /var/lib/ghost/content
 
