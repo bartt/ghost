@@ -1,9 +1,11 @@
 FROM ghost:alpine
 
-RUN npm install -g ghost-webdav-storage-adapter
-
 ENV GHOST_INSTALL /var/lib/ghost
 ENV GHOST_CONTENT /var/lib/ghost/content
+
+RUN npm install ghost-webdav-storage-adapter; \
+    mkdir -pv ./content.orig/adapters/storage/webdav; \
+    cp -v ./node_modules/ghost-webdav-storage-adapter/dist/*.js ./content.orig/adapters/storage/webdav
 
 ARG SMTP_SERVICE="Gmail"
 ARG SMTP_HOST="smtp.gmail.com"
@@ -27,8 +29,8 @@ RUN set -ex; \
     su-exec node ghost config mail.options.auth.user "$SMTP_AUTH_USER"; \
     su-exec node ghost config mail.options.auth.pass "$SMTP_AUTH_PASS"; \
     su-exec node ghost config storage.active "webdav"; \
-    su-exec node ghost config storage.webdav.url "$$WEBDAV_SERVER_URL"; \
-    su-exec node ghost config storage.webdav.username "$$WEBDAV_USERNAME"; \
-    su-exec node ghost config storage.webdav.password "$$WEBDAV_PASSWORD"; \
-    su-exec node ghost config storage.webdav.pathPrefix "$$WEBDAV_PATH_PREFIX"; \
-    su-exec node ghost config storage.webdav.storagePathPrefix "$$WEBDAV_STORAGE_PATH_PREFIX"; \
+    su-exec node ghost config storage.webdav.url "$WEBDAV_SERVER_URL"; \
+    su-exec node ghost config storage.webdav.username "$WEBDAV_USERNAME"; \
+    su-exec node ghost config storage.webdav.password "$WEBDAV_PASSWORD"; \
+    su-exec node ghost config storage.webdav.pathPrefix "$WEBDAV_PATH_PREFIX"; \
+    su-exec node ghost config storage.webdav.storagePathPrefix "$WEBDAV_STORAGE_PATH_PREFIX"; \
