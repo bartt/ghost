@@ -1,0 +1,84 @@
+From 03f4db896c8032cbee4d489516344e264deeb554 Mon Sep 17 00:00:00 2001
+From: Bart Teeuwisse <bart-github@thecodemill.biz>
+Date: Thu, 18 Jan 2018 09:12:11 -0800
+Subject: [PATCH 1/4] Prevent bogus subscriber signups
+
+Stopgap measure to prevent bogus signups that lack referrer and/or a valid post ID.
+---
+ core/server/apps/subscribers/lib/router.js | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/core/server/apps/subscribers/lib/router.js b/core/server/apps/subscribers/lib/router.js
+index 209f849c0a..b887570015 100644
+--- a/core/server/apps/subscribers/lib/router.js
++++ b/core/server/apps/subscribers/lib/router.js
+@@ -63,6 +63,9 @@ function santizeUrl(url) {
+ function handleSource(req, res, next) {
+     req.body.subscribed_url = santizeUrl(req.body.location);
+     req.body.subscribed_referrer = santizeUrl(req.body.referrer);
++    if (validator.isEmpty(req.body.subscribed_referrer)) {
++        return next(new Error('Oops, something went wrong!'));
++    }
+     delete req.body.location;
+     delete req.body.referrer;
+ 
+@@ -70,9 +73,10 @@ function handleSource(req, res, next) {
+         .then(function (result) {
+             if (result && result.post) {
+                 req.body.post_id = result.post.id;
++                return next();
+             }
+-
+-            next();
++            
++            next(new Error('Oops, something went wrong!'));
+         })
+         .catch(function (err) {
+             if (err instanceof common.errors.NotFoundError) {
+
++            request.post('/subscribe/')
++                .set('Content-type', 'application/x-www-form-urlencoded')
++                .send({
++                    email: 'test@ghost.org',
++                    location: 'http://localhost:2368/about',
++                    referrer: 'http://localhost:2368',
++                    confirm: '❄'
+                 })
+                 .expect(200)
+                 .end(function (err, res) {
+
+From f446bf83a01e4ba94c9aa756f0034c34c67951bd Mon Sep 17 00:00:00 2001
+From: Bart Teeuwisse <bart.teeuwisse@thecodemill.biz>
+Date: Tue, 23 Jan 2018 17:09:38 -0800
+Subject: [PATCH 3/4] Fix trailing space.
+
+---
+ core/server/apps/subscribers/lib/router.js | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/core/server/apps/subscribers/lib/router.js b/core/server/apps/subscribers/lib/router.js
+index b887570015..68d38b4b65 100644
+--- a/core/server/apps/subscribers/lib/router.js
++++ b/core/server/apps/subscribers/lib/router.js
+Date: Thu, 25 Jan 2018 09:58:43 -0800
+Subject: [PATCH 4/4] Enforce a referer header on the form submission. Don't
+ require a filled out referrer field in the form data.
+
+---
+ core/server/apps/subscribers/lib/router.js         |  5 +-
+ .../routes/apps/subscribers/routing_spec.js        | 56 ++++++++++++++++------
+ 2 files changed, 45 insertions(+), 16 deletions(-)
+
+diff --git a/core/server/apps/subscribers/lib/router.js b/core/server/apps/subscribers/lib/router.js
+index 68d38b4b65..4ccff36a21 100644
+--- a/core/server/apps/subscribers/lib/router.js
++++ b/core/server/apps/subscribers/lib/router.js
+@@ -63,7 +63,10 @@ function santizeUrl(url) {
+ function handleSource(req, res, next) {
+     req.body.subscribed_url = santizeUrl(req.body.location);
+     req.body.subscribed_referrer = santizeUrl(req.body.referrer);
+-    if (validator.isEmpty(req.body.subscribed_referrer)) {
++    // A form submission will have a referer header. A direct submission via curl typically does not.
++    // The referrer to the page with the subscription form may be empty but must be present in the submitted form data.
++    if (validator.isEmpty(santizeUrl(req.get('referer') || '')) ||
++        req.body.referrer === undefined) {

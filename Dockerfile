@@ -7,6 +7,10 @@ RUN npm install ghost-webdav-storage-adapter; \
     mkdir -pv ./content.orig/adapters/storage/webdav; \
     cp -v ./node_modules/ghost-webdav-storage-adapter/dist/*.js ./content.orig/adapters/storage/webdav
 
+COPY subscribers.patch $GHOST_INSTALL/current
+RUN cd $GHOST_INSTALL/current && patch -p1 < subscribers.patch && \
+    rm -v $GHOST_INSTALL/current/subscribers.patch
+
 ARG SMTP_SERVICE="Gmail"
 ARG SMTP_HOST="smtp.gmail.com"
 ARG SMTP_PORT="465"
