@@ -1,8 +1,8 @@
-diff --git a/core/server/apps/subscribers/lib/router.js b/core/server/apps/subscribers/lib/router.js
+diff --git a/core/frontend/apps/subscribers/lib/router.js b/core/frontend/apps/subscribers/lib/router.js
 index 620c95b67f..d9ebb94011 100644
---- a/core/server/apps/subscribers/lib/router.js
-+++ b/core/server/apps/subscribers/lib/router.js
-@@ -64,6 +64,12 @@ function handleSource(req, res, next) {
+--- a/core/frontend/apps/subscribers/lib/router.js
++++ b/core/frontend/apps/subscribers/lib/router.js
+@@ -65,6 +65,12 @@ function handleSource(req, res, next) {
      req.body.subscribed_url = santizeUrl(req.body.location);
      req.body.subscribed_referrer = santizeUrl(req.body.referrer);
 
