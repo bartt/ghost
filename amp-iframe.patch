@@ -1,0 +1,13 @@
+diff --git a/core/frontend/apps/amp/lib/helpers/amp_components.js b/core/frontend/apps/amp/lib/helpers/amp_components.js
+index 149f6f140..29a277775 100644
+--- a/core/frontend/apps/amp/lib/helpers/amp_components.js
++++ b/core/frontend/apps/amp/lib/helpers/amp_components.js
+@@ -31,7 +31,7 @@ function ampComponents() {
+         components.push('<script async custom-element="amp-youtube" src="https://cdn.ampproject.org/v0/amp-youtube-0.1.js"></script>');
+     }
+ 
+-    if (iframeCount > youtubeCount) {
++    if (iframeCount) {
+         components.push('<script async custom-element="amp-iframe" src="https://cdn.ampproject.org/v0/amp-iframe-0.1.js"></script>');
+     }
+ 

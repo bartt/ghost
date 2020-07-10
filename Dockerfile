@@ -1,4 +1,4 @@
-FROM ghost:alpine
+FROM amd64/ghost:alpine
 
 ENV GHOST_INSTALL /var/lib/ghost
 ENV GHOST_CONTENT /var/lib/ghost/content
@@ -7,6 +7,10 @@ RUN apk update && apk add patch sqlite
 RUN npm install ghost-webdav-storage-adapter; \
     mkdir -pv ./content.orig/adapters/storage/webdav; \
     cp -v ./node_modules/ghost-webdav-storage-adapter/dist/*.js ./content.orig/adapters/storage/webdav
+
+COPY amp-iframe.patch $GHOST_INSTALL/current
+RUN cd $GHOST_INSTALL/current && patch --verbose -p1 < amp-iframe.patch && \
+    rm -v $GHOST_INSTALL/current/amp-iframe.patch
 
 ARG SMTP_SERVICE="Gmail"
 ARG SMTP_HOST="smtp.gmail.com"
