@@ -12,6 +12,10 @@ COPY amp-iframe.patch $GHOST_INSTALL/current
 RUN cd $GHOST_INSTALL/current && patch --verbose -p1 < amp-iframe.patch && \
     rm -v $GHOST_INSTALL/current/amp-iframe.patch
 
+COPY amp-template.patch $GHOST_INSTALL/current
+RUN cd $GHOST_INSTALL/current && patch --verbose -p1 < amp-template.patch && \
+    rm -v $GHOST_INSTALL/current/amp-template.patch
+
 ARG SMTP_SERVICE="Gmail"
 ARG SMTP_HOST="smtp.gmail.com"
 ARG SMTP_PORT="465"
