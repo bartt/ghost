@@ -7,7 +7,7 @@ index 149f6f140..29a277775 100644
      }
  
 -    if (iframeCount > youtubeCount) {
-+    if (iframeCount) {
++    if (true) {
          components.push('<script async custom-element="amp-iframe" src="https://cdn.ampproject.org/v0/amp-iframe-0.1.js"></script>');
      }
  
