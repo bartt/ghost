@@ -1,4 +1,4 @@
-FROM amd64/ghost:alpine
+FROM ghost:alpine
 
 ENV GHOST_INSTALL /var/lib/ghost
 ENV GHOST_CONTENT /var/lib/ghost/content
