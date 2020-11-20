@@ -9,11 +9,11 @@ RUN npm install ghost-webdav-storage-adapter; \
     cp -v ./node_modules/ghost-webdav-storage-adapter/dist/*.js ./content.orig/adapters/storage/webdav
 
 COPY amp-iframe.patch $GHOST_INSTALL/current
-RUN cd $GHOST_INSTALL/current && patch --verbose -p1 < amp-iframe.patch && \
+RUN cd $GHOST_INSTALL/current && patch --verbose -F6 -p1 < amp-iframe.patch && \
     rm -v $GHOST_INSTALL/current/amp-iframe.patch
 
 COPY amp-template.patch $GHOST_INSTALL/current
-RUN cd $GHOST_INSTALL/current && patch --verbose -p1 < amp-template.patch && \
+RUN cd $GHOST_INSTALL/current && patch --verbose -F6 -p1 < amp-template.patch && \
     rm -v $GHOST_INSTALL/current/amp-template.patch
 
 ARG SMTP_SERVICE="Gmail"
