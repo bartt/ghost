@@ -29,13 +29,6 @@ ARG SMTP_AUTH_USER=""
 ARG SMTP_AUTH_PASS=""
 ARG SMTP_FROM="$SMTP_AUTH_USER"
 
-# WebDAV storage adapter parameters
-ARG WEBDAV_SERVER_URL="https://bartt.stackstorage.com/remote.php/webdav/"
-ARG WEBDAV_USERNAME=""
-ARG WEBDAV_PASSWORD=""
-ARG WEBDAV_PATH_PREFIX="/Blog"
-ARG WEBDAV_STORAGE_PATH_PREFIX=""
-
 # Required S3 storage adapter parameters
 ARG AWS_ACCESS_KEY_ID=""
 ARG AWS_SECRET_ACCESS_KEY=""
@@ -60,15 +53,6 @@ RUN set -ex; \
     su-exec node ghost config mail.options.port "$SMTP_PORT"; \
     su-exec node ghost config mail.options.auth.user "$SMTP_AUTH_USER"; \
     su-exec node ghost config mail.options.auth.pass "$SMTP_AUTH_PASS";
-
-# Set the WebDAV storage section in the Ghost configuration file to the provided WebDAV build arguments.
-RUN set -ex; \
-    su-exec node ghost config storage.active "webdav"; \
-    su-exec node ghost config storage.webdav.url "$WEBDAV_SERVER_URL"; \
-    su-exec node ghost config storage.webdav.username "$WEBDAV_USERNAME"; \
-    su-exec node ghost config storage.webdav.password "$WEBDAV_PASSWORD"; \
-    su-exec node ghost config storage.webdav.pathPrefix "$WEBDAV_PATH_PREFIX"; \
-    su-exec node ghost config storage.webdav.storagePathPrefix "$WEBDAV_STORAGE_PATH_PREFIX";
 
 # Set the S3 storage section in the Ghost configuration file to the provided S3 build arguments.
 RUN set -ex; \
