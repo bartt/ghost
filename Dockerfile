@@ -68,3 +68,7 @@ RUN set -ex; \
     su-exec node ghost config storage.s3.secretAccessKey "$AWS_SECRET_ACCESS_KEY"; \
     su-exec node ghost config storage.s3.serverSideEncryption "$GHOST_STORAGE_ADAPTER_S3_SSE"; \
     su-exec node ghost config storage.s3.signatureVersion "$GHOST_STORAGE_ADAPTER_S3_SIGNATURE_VERSION";
+
+# Set the Portal URL to a custom version without Ghost branding
+RUN set -ex; \
+    su-exec node ghost config portal.url "https://unpkg.com/@the-code-mill/portal@latest/umd/portal.min.js";
