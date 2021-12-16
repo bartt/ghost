@@ -57,6 +57,10 @@ RUN set -ex; \
 # Set the S3 storage section in the Ghost configuration file to the provided S3 build arguments.
 RUN set -ex; \
     su-exec node ghost config storage.active "s3"; \
+    su-exec node ghost config storage.files "s3"; \
+    su-exec node ghost config storage.images "s3"; \
+    su-exec node ghost config storage.media "s3"; \
+    su-exec node ghost config storage.videos "s3"; \
     su-exec node ghost config storage.s3.accessKeyId "$AWS_ACCESS_KEY_ID"; \
     su-exec node ghost config storage.s3.acl "$GHOST_STORAGE_ADAPTER_S3_ACL"; \
     su-exec node ghost config storage.s3.assetHost "$GHOST_STORAGE_ADAPTER_S3_ASSET_HOST"; \
@@ -67,7 +71,8 @@ RUN set -ex; \
     su-exec node ghost config storage.s3.region "$AWS_DEFAULT_REGION"; \
     su-exec node ghost config storage.s3.secretAccessKey "$AWS_SECRET_ACCESS_KEY"; \
     su-exec node ghost config storage.s3.serverSideEncryption "$GHOST_STORAGE_ADAPTER_S3_SSE"; \
-    su-exec node ghost config storage.s3.signatureVersion "$GHOST_STORAGE_ADAPTER_S3_SIGNATURE_VERSION";
+    su-exec node ghost config storage.s3.signatureVersion "$GHOST_STORAGE_ADAPTER_S3_SIGNATURE_VERSION"; \
+    su-exec node ghost config storage.s3.staticFileURLPrefix "/content/files"; 
 
 # Set the Portal URL to a custom version without Ghost branding
 RUN set -ex; \
