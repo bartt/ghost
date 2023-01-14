@@ -1,25 +1,19 @@
 FROM ghost:alpine
 
-ENV GHOST_INSTALL /var/lib/ghost
-ENV GHOST_CONTENT /var/lib/ghost/content
-
-RUN apk update && apk add patch sqlite python3 build-base
-RUN npm install ghost-storage-adapter-s3-bartt; \
-    mkdir -pv ./content.orig/adapters/storage/s3; \
-    cp -v ./node_modules/ghost-storage-adapter-s3-bartt/*.js ./content.orig/adapters/storage/s3
+ENV GHOST_INSTALL=/var/lib/ghost GHOST_CONTENT=/var/lib/ghost/content
 
 # Patch AMP so that photo carousel iframes work
-COPY amp-iframe.patch $GHOST_INSTALL/current
-RUN cd $GHOST_INSTALL/current && patch --verbose -F6 -p1 < amp-iframe.patch && \
-    rm -v $GHOST_INSTALL/current/amp-iframe.patch
-
-# Remove Ghost advertising from AMP pages
-COPY amp-template.patch $GHOST_INSTALL/current
-RUN cd $GHOST_INSTALL/current && patch --verbose -F6 -p1 < amp-template.patch && \
-    rm -v $GHOST_INSTALL/current/amp-template.patch
-
+# Remove Ghost advertising from AMP pages &
 # Remove packages only needed to build and install the S3 storage adapter
-RUN apk del python3 build-base
+COPY amp-iframe.patch amp-template.patch $GHOST_INSTALL/current
+RUN apk update && apk add sqlite patch python3 build-base && \
+    npm install ghost-storage-adapter-s3-bartt && \
+    mkdir -pv ./content.orig/adapters/storage/s3 && \
+    cp -v ./node_modules/ghost-storage-adapter-s3-bartt/*.js ./content.orig/adapters/storage/s3 && \
+    cd $GHOST_INSTALL/current && patch --verbose -F6 -p1 < amp-iframe.patch && \
+    rm -v $GHOST_INSTALL/current/amp-iframe.patch && \
+    cd $GHOST_INSTALL/current && patch --verbose -F6 -p1 < amp-template.patch && \
+    rm -v $GHOST_INSTALL/current/amp-template.patch && apk del patch python3 build-base
 
 # SMTP mail parameters
 ARG SMTP_SERVICE="Gmail"
