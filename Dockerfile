@@ -5,7 +5,7 @@ ENV GHOST_INSTALL=/var/lib/ghost GHOST_CONTENT=/var/lib/ghost/content
 # Patch AMP so that photo carousel iframes work
 # Remove Ghost advertising from AMP pages &
 # Remove packages only needed to build and install the S3 storage adapter
-COPY amp-iframe.patch amp-template.patch $GHOST_INSTALL/current
+COPY amp-iframe.patch amp-template.patch $GHOST_INSTALL/current/
 RUN apk update && apk add sqlite patch python3 build-base && \
     npm install ghost-storage-adapter-s3-bartt && \
     mkdir -pv ./content.orig/adapters/storage/s3 && \
